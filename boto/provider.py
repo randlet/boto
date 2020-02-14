@@ -194,7 +194,11 @@ class Provider(object):
         self._credential_expiry_time = None
 
         # Load shared credentials file if it exists
-        shared_path = os.path.join(expanduser('~'), '.' + name, 'credentials')
+        shared_path_env = os.environ.get("AWS_SHARED_CREDENTIALS_FILE")
+        if shared_path_env:
+            shared_path = os.path.abspath(shared_path_env)
+        else:
+            shared_path = os.path.join(expanduser('~'), '.' + name, 'credentials')
         self.shared_credentials = Config(do_load=False)
         if os.path.isfile(shared_path):
             self.shared_credentials.load_from_path(shared_path)
